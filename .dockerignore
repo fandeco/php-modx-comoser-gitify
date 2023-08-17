@@ -1,0 +1,9 @@
+/src/node_modules
+/.git
+/.idea
+/.vscode
+**.env
+**.editorconfig
+**.gitattributes
+**.gitignore
+/docker-compose.yml
