@@ -6,7 +6,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY --chown=www-data:www-data ./index.php /var/www/html
 
 RUN apk update && apk upgrade
-RUN apk add build-base autoconf libzip-dev libpng-dev libjpeg-turbo-dev libwebp-dev bash mariadb-client mc nano
+RUN apk add build-base autoconf libzip-dev libpng-dev libjpeg-turbo-dev libwebp-dev bash mariadb-client mc nano icu-dev
 
 # Install cron
 RUN apk add --no-cache dcron
@@ -28,10 +28,22 @@ RUN docker-php-ext-install zip
 RUN docker-php-ext-install bz2
 RUN docker-php-ext-install pdo_mysql
 
+#Установка и включение intl
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-install intl
+RUN docker-php-ext-enable intl
+
 # Установка и включение расширения GD
 RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd
+
+
+# Установка infisical
+RUN apk add --no-cache bash curl && curl -1sLf \
+'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
+&& apk add infisical
+
 
 RUN composer global config minimum-stability alpha
 ENV PATH=/root/.composer/vendor/bin:$PATH
