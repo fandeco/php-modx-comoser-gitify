@@ -32,6 +32,12 @@ RUN docker-php-ext-install pdo_mysql
 RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd
+    
+# Установка и включение расширения intl
+RUN apt-get install -y \
+    libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl
 
 RUN composer global config minimum-stability alpha
 ENV PATH=/root/.composer/vendor/bin:$PATH
