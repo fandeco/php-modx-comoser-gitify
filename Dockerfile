@@ -1,6 +1,9 @@
 ARG PHP_VERSION=7.4
 FROM php:7.4-fpm-alpine
 
+# Установка Supervisor
+RUN apk add --no-cache supervisor
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY --chown=www-data:www-data ./index.php /var/www/html
@@ -10,6 +13,10 @@ RUN apk add build-base autoconf libzip-dev libpng-dev libjpeg-turbo-dev libwebp-
 
 # Install cron
 RUN apk add --no-cache dcron
+
+RUN apk add --no-cache supervisor
+COPY ./supervisor/supervisord.conf /etc/supervisord.conf
+RUN mkdir -p /var/log/supervisor
 
 # копируем задание которое будет запускать crond.sh для переноса новых заданий из файла в crontab core/scheduler/crontabs/$USER
 COPY ./crontabs/cron /etc/cron.d/cron
@@ -38,12 +45,14 @@ RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev lib
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd
 
-
 # Установка infisical
 RUN apk add --no-cache bash curl && curl -1sLf \
 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
 && apk add infisical
 
+# Копируем конфигурационный файл Supervisor
+COPY ./docker/php-fpm/supervisor/supervisord.conf /etc/supervisord.conf
+RUN mkdir -p /var/log/supervisor
 
 RUN composer global config minimum-stability alpha
 ENV PATH=/root/.composer/vendor/bin:$PATH
