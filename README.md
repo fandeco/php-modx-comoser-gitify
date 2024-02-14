@@ -1,5 +1,7 @@
 # Docker для modx
 
+В данной сборке включения Actions, при push в ветку master произойдет автоматический билд образа и отправится на https://hub.docker.com/repositories/hubfandeco
+
 Билд образа
 
 ```bash
