@@ -18,5 +18,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t hubfandeco/php-modx-comoser-gitify:latest .
-          docker push hubfandeco/php-modx-comoser-gitify:latest
+          docker buildx build --platform linux/amd64 -t hubfandeco/php-modx-comoser-gitify:latest .
+          docker buildx create --use
+          docker buildx build --platform linux/arm64,linux/amd64 -t hubfandeco/php-modx-comoser-gitify:latest --push .
