@@ -51,7 +51,7 @@ RUN apk add --no-cache bash curl && curl -1sLf \
 && apk add infisical
 
 # Копируем конфигурационный файл Supervisor
-COPY ./docker/php-fpm/supervisor/supervisord.conf /etc/supervisord.conf
+COPY ./supervisor/supervisord.conf /etc/supervisord.conf
 RUN mkdir -p /var/log/supervisor
 
 RUN composer global config minimum-stability alpha
